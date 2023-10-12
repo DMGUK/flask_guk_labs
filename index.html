@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood & music quiz</title>
+</head>
+<body>
+    <h1>Mood & music quiz</h1>
+    <form action="/cgi-bin/form_handler.py" method="post">
+        Enter your username: <input type="text" name="username">
+        <br><br>
+        Enter your age: <input type="number" name="age">
+        <br><br>
+        <p>How are you today ?</p>
+        <input type="radio" name="mood" value="happy"> Happy
+        <input type="radio" name="mood" value="sad"> Sad
+        <input type="radio" name="mood" value="it had been better"> It had been better
+        <br>
+        <p>Tell me, which music do you like</p>
+        <input type="checkbox" name="jazz" value="on"> Jazz
+        <input type="checkbox" name="ambient" value="on"> Ambient
+        <input type="checkbox" name="classical" value="on"> Classical
+        <input type="checkbox" name="rap" value="on"> Rap
+        <input type="checkbox" name="hip-hop" value="on"> Hip-hop
+        <br><br>
+        <input type="submit" value="Finish the quiz">
+    </form>
+
+</body>
+</html>
