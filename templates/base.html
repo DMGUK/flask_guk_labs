@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Dmytro Huk's Online Resume{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="basepage_title">
+        <h1>Online resume of student Dmytro Huk (group IPZ-31)</h1>
+    </header>
+    <div class="content">
+        <nav>
+            <ul>
+                <li><a class="toggleButton" href="{{ url_for('homepage') }}" data-title="My Resume Homepage">Homepage</a></li>
+                <br>
+                <li><a class="toggleButton" href="{{ url_for('about_me') }}" data-title="About Me">About Me</a></li>
+                <br>
+                <li><a class="toggleButton" href="{{ url_for('my_experience') }}" data-title="My Experience">My Experience</a></li>
+                <br>
+                <li><a class="toggleButton" href="{{ url_for('my_projects') }}" data-title="My Projects">My Projects</a></li>
+                <br>
+                <li>
+                <form id="skillForm">
+                    <label>Enter the number of the skill to find: </label>
+                    <input type="text" name="id" id="inputID" class="inputID">
+                    <br><br>
+                    <button class="buttonSkillForm" type="submit" onclick="generateLink()">Find skill</button>
+                </form>
+                <a class="toggleButton" id="generatedLink" href=""></a>
+                </li>
+                <br>
+                <li><a class="toggleButton" href="{{ url_for('contacts') }}" data-title="Find Me">Find Me</a></li>
+            </ul>
+        </nav>
+        <main id = "mainContent">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <footer>
+        <p>User's OS: {{ user_os }}, User-Agent: {{ user_agent }}, Current time: {{ current_time }}</p>
+        <p>&copy; Dmytro Huk 2023</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/jquery-3.7.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

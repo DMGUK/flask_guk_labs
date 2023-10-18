@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if skill %}
+        {{ skill }} Skill
+    {% else %}
+        All Skills
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if skill %}
+        <h2>You have selected skill: {{ skill }}</h2>
+        <p>You're right. I have a basic understanding in {{ skill }}</p>
+        <img src="{{ url_for('static', filename='images/' + logo) }}" alt="{{ skill }} Logo" width="400" height="300">
+    {% elif skills %}
+        <h2>List of all of my skills:</h2>
+        <p>Here is the list of my skills that I put into my resume: </p>
+        <ul>
+            {% for s in skills %}
+                <li>{{ s["name"] }} <img class="image_list" src="{{ url_for('static', filename='images/' + s["logo"]) }}" alt="{{ s["name"] }} Logo"></li>
+            {% endfor %}
+        </ul>
+        <p>Total number of my skills is: {{ skills | length }}</p>
+    {% else %}
+        <h2>Oops, you're wrong. :)</h2>
+        <p style="font-size: 14px;">The ID of the skill that you've entered is invalid. <br>
+        I don't have the skill with such skill ID</p>
+        <img src="/static/images/invalid_id_error.png" width="400" height="300">
+    {% endif %}
+{% endblock %}

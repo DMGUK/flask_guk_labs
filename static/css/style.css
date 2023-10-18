@@ -1,0 +1,69 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header, footer {
+    flex: 0 0 auto;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+}
+
+nav, main {
+    flex: 1;
+}
+
+nav {
+    flex: 1;
+    max-width: calc(15% + 10px);
+    min-width: calc(100px + 10px);
+    overflow: auto;
+}
+
+main {
+    flex-direction: column;
+    padding: 10px;
+}
+
+.basepage_title {
+    text-align: center;
+    color: #0d6efd;
+}
+
+nav, main, footer, header {
+    border: 1px solid brown;
+    /*padding: 1px;*/
+}
+
+.toggleButton, .toggleSkillsButton{
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.inputID {
+    width: 100px;
+}
+
+.image_list{
+    width: 100px;
+    height: 100px;
+}
+
+.buttonSkillForm{
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+header, footer{
+    background-color: #ffe792;
+}
+nav{
+    background-color: rgba(109, 162, 255, 0.7);
+}
+main {
+    background-color: lightcoral;
+}
