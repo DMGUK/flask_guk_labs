@@ -26,6 +26,6 @@
         <h2>Oops, you're wrong. :)</h2>
         <p style="font-size: 14px;">The ID of the skill that you've entered is invalid. <br>
         I don't have the skill with such skill ID</p>
-        <img src="/static/images/invalid_id_error.png" width="400" height="300">
+        <img src="{{ url_for('static', filename='images/invalid_id_error.png') }}"width="400" height="300">
     {% endif %}
 {% endblock %}
