@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Login form</h2><br>
+    <form id="loginForm" action="/login" method="POST">
+        <input placeholder="Enter your username:" type="text" name="username"><br><br>
+        <input placeholder="Enter your password:" type="password" name="password"><br><br>
+        <input type="submit" name="Log in">
+    </form>
+
+    {% if login_failed %}
+        <p style="color: darkgreen;"><b>Login failed. Please check your username and password.</b></p>
+    {% endif %}
+{% endblock %}

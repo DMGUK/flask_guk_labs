@@ -67,3 +67,13 @@ nav{
 main {
     background-color: lightcoral;
 }
+.cookiesTable{
+    border: 1px solid brown;
+    text-align: center;
+}
+.cookiesTableHeading{
+    text-align: center;
+}
+.cookiesTable > td, .cookiesTable > th{
+    width: 50%;
+}

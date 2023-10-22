@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}Dmytro Huk's Online Resume{% endblock %}</title>
@@ -11,7 +10,7 @@
     </header>
     <div class="content">
         {% include 'nav.html' %}
-        <main id = "mainContent">
+        <main id = "mainContent" style = "display: block;">
             {% block content %}{% endblock %}
         </main>
     </div>

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var $text = $('#mainContent');
-    $text.hide();
+    // $text.hide();
 
     function loadAndShowContent(href, newTitle) {
         $text.fadeOut(1000, function() {
