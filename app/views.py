@@ -156,4 +156,17 @@ def remove_all_cookies():
 def change_password():
     new_password = request.form.get('new_password')
     session['password'] = new_password
+
+    with open('app/admin.json') as f:
+        admin_data = json.load(f)
+
+    new_admin_data = {
+        'username': admin_data['username'],
+        'password': new_password
+    }
+
+    new_passwd_json = json.dumps(new_admin_data, indent=4)
+
+    with open("app/admin.json", "w") as outfile:
+        outfile.write(new_passwd_json)
     return render_template('password_changed.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
