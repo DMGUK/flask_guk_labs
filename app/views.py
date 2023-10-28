@@ -1,12 +1,11 @@
 import json
 import random
-from http.cookies import SimpleCookie
-
-from flask import render_template, request, redirect, url_for, session, make_response, jsonify
+from flask import render_template, request, redirect, url_for, session, make_response, jsonify, flash
 from platform import system as os_name
 from datetime import datetime
 
 from app import app
+from app.forms import LoginForm, ChangePasswordForm
 
 my_skills = [
     {"name": "C++", "logo": "cpp_logo.png"},
@@ -31,26 +30,27 @@ def add_cache_control(response):
     response.headers['Expires'] = '0'
     return response
 
+# @app.route('/')
+# def base():
+#     return render_template('base.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
+
+
 @app.route('/')
-def base():
-    return render_template('base.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
-
-
 @app.route('/homepage')
 def homepage():
     return render_template('homepage.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
 
 @app.route('/about_me')
 def about_me():
-    return render_template('about_me.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
+    return render_template('about_me.html')
 
 @app.route('/my_experience')
 def my_experience():
-    return render_template('my_experience.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
+    return render_template('my_experience.html')
 
 @app.route('/my_projects')
 def my_projects():
-    return render_template('my_projects.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
+    return render_template('my_projects.html')
 
 @app.route('/skills/')
 @app.route('/skills/<int:id>')
@@ -72,50 +72,55 @@ def generate_link():
 
 @app.route('/contacts')
 def contacts():
-    return render_template('contacts.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
+    return render_template('contacts.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    login_failure = False
+    form = LoginForm()
 
-    with open('app/admin.json') as f:
-        admin_data = json.load(f)
+    if form.validate_on_submit():
+        with open('app/admin.json') as f:
+            admin_data = json.load(f)
 
-    json_username = admin_data['username']
-    json_password = admin_data['password']
-
-    if request.method == "POST":
-        form_username = request.form.get("username")
-        form_password = request.form.get("password")
+        json_username = admin_data['username']
+        json_password = admin_data['password']
+        form_username = form.username.data
+        form_password = form.password.data
+        form_remember = form.remember.data
         if form_username == json_username and form_password == json_password:
-            user_id = random.randint(1, 10000)
-            session['userId'] = user_id
-            session['username'] = form_username
-            session['password'] = form_password
-            return redirect(url_for("info"))
-        else:
-            login_failure = True
-    return render_template("login.html", user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2], login_failed=login_failure)
+            if form_remember == True:
+                user_id = random.randint(1, 10000)
+                session['userId'] = user_id
+                session['username'] = form_username
+                session['password'] = form_password
+                session['remember'] = form_remember
+                flash("You have logged in.", category="flash-success")
+                return redirect(url_for("info"))
+            flash("You didn't remember yourself in the site. Please, check you credentials again.", category="flash-error")
+            return redirect(url_for("homepage"))
+        flash("You didn't put correct user credentials. Please, check them again.", category="flash-error")
+        return redirect(url_for("homepage"))
+    return render_template("login.html", form=form)
 
 @app.route('/info', methods=['GET'])
 def info():
     cookies = request.cookies
-    return render_template('info.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2], cookies=cookies)
+    form = ChangePasswordForm()
+
+    return render_template('info.html', cookies=cookies, form=form)
 
 @app.route('/logout')
 def logout():
-    session.pop('userId')
-    session.pop('username')
-    session.pop('password')
+    session.clear()
     return redirect(url_for('login'))
 
 def set_cookie(key, value, max_age):
-    response = make_response(render_template('cookie_added_page.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2]))
+    response = make_response(redirect('info'))
     response.set_cookie(key, value, max_age=max_age)
     return response
 
 def delete_cookie(key):
-    response = make_response(render_template('cookie_deleted_page.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2]))
+    response = make_response(redirect('info'))
     response.delete_cookie(key)
     return response
 
@@ -123,50 +128,71 @@ def delete_cookie(key):
 def add_cookie():
     key = request.form.get('key')
     value = request.form.get('value')
-    max_age = int(request.form.get('max_age'))
+    max_age = request.form.get('max_age')
 
-    return set_cookie(key, value, max_age)
+    if key != '' and value != '' and max_age != '':
+        flash(f"Cookie has been added successfully!", category='flash-success')
+        return set_cookie(key, value, int(max_age))
+
+    flash(f"There has been error while adding the cookie", category='flash-error')
+    return redirect(url_for('info'))
 
 @app.route('/remove_cookie/', methods=['GET'])
 @app.route('/remove_cookie/<key>', methods=['GET'])
-def remove_cookie():
+def remove_cookie(key=None):
 
     key = request.args.get('key')
 
     if key:
-        response = make_response(render_template('cookie_deleted_page.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2]))
+        response = make_response(redirect(url_for('info')))
         response.delete_cookie(key)
+        flash("Cookie has been deleted successfully.", category='flash-success')
         return response
     else:
-        response = make_response(render_template('cookie_deleted_error_page.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2]))
-        return response
+        flash("Please provide a key to remove.", category='flash-error')
+        return redirect(url_for('info'))
 
 @app.route('/remove_all_cookies', methods=['GET'])
 def remove_all_cookies():
-    response = make_response(render_template('all_cookies_deleted_page.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2]))
+    response = make_response(redirect('info'))
     cookies = request.cookies
 
     for key in cookies.keys():
         if key != 'session':
             response.delete_cookie(key)
 
+    flash("All cookies removed successfully!", category='flash-success')
     return response
 
 @app.route('/change_password', methods=['POST'])
 def change_password():
-    new_password = request.form.get('new_password')
-    session['password'] = new_password
+    form = ChangePasswordForm()
 
-    with open('app/admin.json') as f:
-        admin_data = json.load(f)
+    if form.validate_on_submit():
+        new_password = form.password.data
+        confirm_new_password = form.confirm_password.data
+        if new_password != '':
+            if new_password == confirm_new_password:
+                session['password'] = new_password
 
-    new_admin_data = {
-        'username': admin_data['username'],
-        'password': new_password
-    }
+                with open('app/admin.json') as f:
+                    admin_data = json.load(f)
 
-    new_passwd_json = json.dumps(new_admin_data, indent=4)
+                new_admin_data = {
+                    'username': admin_data['username'],
+                    'password': new_password
+                }
 
-    with open("app/admin.json", "w") as outfile:
-        outfile.write(new_passwd_json)
-    return render_template('password_changed.html', user_os=user_details()[0], user_agent=user_details()[1], current_time=user_details()[2])
+                new_passwd_json = json.dumps(new_admin_data, indent=2)
+
+                with open("app/admin.json", "w") as outfile:
+                    outfile.write(new_passwd_json)
+
+                flash("Password has been changed successfully", category='flash-success')
+                return redirect(url_for('info'))
+
+            flash("You didn't confirm your password", category='flash-error')
+            return redirect(url_for('info'))
+
+    flash("You didn't put any new passwords nor you confirmed any. Please, try once again", category='flash-error')
+    return redirect(url_for('info'))

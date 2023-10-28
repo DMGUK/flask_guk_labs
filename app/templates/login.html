@@ -2,15 +2,34 @@
 
 {% block title %}Login{% endblock %}
 
-{% block content %}
-    <h2>Login form</h2><br>
-    <form id="loginForm" action="/login" method="POST">
-        <input placeholder="Enter your username:" type="text" name="username"><br><br>
-        <input placeholder="Enter your password:" type="password" name="password"><br><br>
-        <input type="submit" name="Log in">
-    </form>
-
-    {% if login_failed %}
-        <p style="color: darkgreen;"><b>Login failed. Please check your username and password.</b></p>
+{% macro render_field(field, placeholder='') %}
+    {% if field.type == 'BooleanField' %}
+        {{ field.label }} {{ field(placeholder='Keep me logged in') }}<br><br>
+    {% elif field.type == 'PasswordField' %}
+        {{ field(placeholder='Enter your password: ') }}<br><br>
+    {% elif field.type == 'StringField' %}
+        {{ field(placeholder='Enter your username: ') }}<br><br>
+    {% else %}
+        {{ field(placeholder=placeholder) }}<br><br>
     {% endif %}
+    {% if field.errors %}
+        <ul class="errors">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="pageSection">
+        <h2>Login form</h2><br>
+        <form action="/login" method="POST" novalidate>
+            {{ form.csrf_token }}
+            {{ render_field(form.username) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.remember) }}
+            {{ render_field(form.submit) }}
+        </form>
+    </div>
 {% endblock %}

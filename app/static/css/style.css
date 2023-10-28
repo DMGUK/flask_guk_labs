@@ -4,7 +4,7 @@ body {
     min-height: 100vh;
 }
 
-header, footer {
+header {
     flex: 0 0 auto;
 }
 
@@ -26,7 +26,8 @@ nav {
 
 main {
     flex-direction: column;
-    padding: 10px;
+    /*padding: 5px;*/
+    overflow-x: hidden;
 }
 
 .basepage_title {
@@ -34,7 +35,7 @@ main {
     color: #0d6efd;
 }
 
-nav, main, footer, header {
+nav, main, header {
     border: 1px solid brown;
     /*padding: 1px;*/
 }
@@ -58,7 +59,7 @@ nav, main, footer, header {
     border-radius: 2px;
 }
 
-header, footer{
+header{
     background-color: #ffe792;
 }
 nav{
@@ -69,11 +70,35 @@ main {
 }
 .cookiesTable{
     border: 1px solid brown;
+    width: 1000px;
     text-align: center;
 }
-.cookiesTableHeading{
+.cookiesTableHeading, .cookiesTableHeading > th{
     text-align: center;
 }
-.cookiesTable > td, .cookiesTable > th{
-    width: 50%;
+.flash-success{
+    color: darkgreen;
+    padding: 10px;
+}
+
+.flash-error{
+    color: darkred;
+    padding: 10px;
+}
+
+.homepageFooter{
+    background-color: #ffe792;
+    border: 1px solid brown;
+    width: 100%;
+    color: #4b4b4b;
+    bottom: 0;
+    height: max-content;
+}
+
+.pageSection{
+    padding: 10px;
+}
+
+.sessionCookieShow{
+    width: 800px;
 }

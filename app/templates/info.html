@@ -5,61 +5,105 @@
 {% set username = session['username'] %}
 {% set userId = session['userId'] %}
 
-{% block content %}
-    <h2>Hi, {{ username }} and welcome to the resume website</h2>
-    <p><b>You've successfully logged in and you can safely begin to use this site. Good luck !!!</b></p>
-    <p><b>Your unique ID is : {{ userId }}</b></p>
-    <a href="/logout" class="toggleButton">Log out</a>
-    <br>
-    <h2>Create a cookie</h2>
-    <form action="/add_cookie" method="POST">
-        <label for="key">Key:</label>
-        <input type="text" id="key" name="key" ><br><br>
-
-        <label for="value">Value:</label>
-        <input type="text" id="value" name="value" ><br><br>
-
-        <label for="max_age">Max Age (seconds):</label>
-        <input type="number" id="max_age" name="max_age"><br><br>
-
-        <input type="submit" value="Add Cookie">
-    </form>
-
-    <h2>Remove a cookie</h2>
-    <form action="/remove_cookie" method="GET">
-        <label for="key_to_remove">Key to Remove:</label>
-        <input type="text" id="key_to_remove" name="key"><br><br>
-
-        <input type="submit" value="Remove Cookie">
-    </form>
-
-    <h2>Remove all cookies that you've created</h2>
-    <form action="/remove_all_cookies" method="GET">
-        <input type="submit" value="Remove All Cookies">
-    </form>
-
-    <h2 class="cookiesTableHeading">Table of currently existing cookies</h2>
-    <table class = "cookiesTable">
-        <thead class = "cookiesTable">
-            <tr class = "cookiesTable">
-                <th class = "cookiesTable">Key</th>
-                <th class = "cookiesTable">Value</th>
-            </tr>
-        </thead>
-        <tbody class = "cookiesTable">
-            {% for key, value in cookies.items() %}
-                <tr class = "cookiesTable">
-                    <td class = "cookiesTable">{{ key }}</td>
-                    <td class = "cookiesTable">{{ value }}</td>
-                </tr>
+{% macro render_field(field, placeholder='') %}
+    {% if field.id == 'password' %}
+        {{ field(placeholder='Enter your password: ') }}<br><br>
+    {% elif field.id == 'confirm_password' %}
+        {{ field(placeholder='Confirm your password: ') }}<br><br>
+    {% else %}
+        {{ field(placeholder=placeholder) }}<br><br>
+    {% endif %}
+    {% if field.errors %}
+        <ul class="errors">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
             {% endfor %}
-        </tbody>
-    </table>
+        </ul>
+    {% endif %}
+{% endmacro %}
 
-    <h2>Change your password</h2>
-    <form action="/change_password" method="POST">
-        <input placeholder="Enter your new password:" type="password" name="new_password"><br><br>
-        <input type="submit" value="Change password">
-    </form>
+{% block content %}
+    <div class="pageSection">
+        <h2>Hi, {{ username }} and welcome to the resume website</h2>
+        <p><b>You've successfully logged in and you can safely begin to use this site. Good luck !!!</b></p>
+        <p><b>Your unique ID is : {{ userId }}</b></p>
+        <a href="/logout" class="toggleButton">Log out</a>
+        <br>
+        <h2>Create a cookie</h2>
+        <form action="/add_cookie" method="POST">
+            <label for="key">Key:</label>
+            <input type="text" id="key" name="key" ><br><br>
 
+            <label for="value">Value:</label>
+            <input type="text" id="value" name="value" ><br><br>
+
+            <label for="max_age">Max Age (seconds):</label>
+            <input type="number" id="max_age" name="max_age"><br><br>
+
+            <input type="submit" value="Add Cookie">
+        </form>
+
+        <h2>Remove a cookie</h2>
+        <form action="/remove_cookie" method="GET">
+            <label for="key_to_remove">Key to Remove:</label>
+            <input type="text" id="key_to_remove" name="key"><br><br>
+
+            <input type="submit" value="Remove Cookie">
+        </form>
+
+        <h2>Remove all cookies that you've created</h2>
+        <form action="/remove_all_cookies" method="GET">
+            <input type="submit" value="Remove All Cookies">
+        </form>
+        <br><br>
+        <div class = "sessionCookieShow">
+            <h2>Session cookie</h2>
+            {% for key, value in cookies.items() %}
+                {% if key == 'session' %}
+                    <p><strong>Value of the {{ key }} cookie is :</strong>
+                    {% set wrapped_value = value|wordwrap(100) %}
+                        {{ wrapped_value|safe }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <br><br>
+        <h2 class="cookiesTableHeading">Table of user-created cookies</h2>
+        <table class = "cookiesTable">
+            <thead class = "cookiesTable">
+                <tr class = "cookiesTable">
+                    <th class = "cookiesTable">Key</th>
+                    <th class = "cookiesTable">Value</th>
+                </tr>
+            </thead>
+            <tbody class = "cookiesTable">
+                {% set non_session_cookies = {} %}
+                {% for key, value in cookies.items() %}
+                    {% if key != 'session' %}
+                        {% set _ = non_session_cookies.update({key: value}) %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if non_session_cookies|length > 0 %}
+                    {% for key, value in non_session_cookies.items() %}
+                        <tr class="cookiesTable">
+                            <td class="cookiesTable">{{ key }}</td>
+                            <td class="cookiesTable">{{ value }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="2"><strong>There aren't any cookies outside the session cookie yet</strong></td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <br><br>
+        <h2>Change your password</h2>
+        <form action="/change_password" method="POST" novalidate>
+            {{ form.csrf_token }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm_password) }}
+            {{ render_field(form.submit) }}
+        </form>
+    </div>
 {% endblock %}
