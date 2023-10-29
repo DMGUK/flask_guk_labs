@@ -3,22 +3,24 @@
 {% block title %}About Me{% endblock %}
 
 {% block content %}
-    <h2>About Me</h2>
-    <section>
-        <p>    My name is Dmytro Huk. I am writing to express my interest in the internship
-        program at your company. <br> As a third-year Bachelor's Degree student majoring
-        in Software Engineering, <br> I am a young and motivated individual who is
-            <br> passionate about personal development. </p>
+    <div class="pageSection">
+        <h2>About Me</h2>
+        <section>
+            <p>    My name is Dmytro Huk. I am writing to express my interest in the internship
+            program at your company. <br> As a third-year Bachelor's Degree student majoring
+            in Software Engineering, <br> I am a young and motivated individual who is
+                <br> passionate about personal development. </p>
 
-        <img src="{{ url_for('static', filename='images/image_about_me.png') }}" width="300" height="500">
+            <img src="{{ url_for('static', filename='images/image_about_me.png') }}" width="300" height="500">
 
-        <p>    I would describe myself as a responsible, self-organized, communicative, confident,
-        hard-working, punctual, diligent, and creative person. <br> I can work effectively
-        both in a team and individually. I can work effectively both in a team and individually.
-        I believe I am a suitable fit for this position. I always live by the motto "there
-        is no goal that cannot be accomplished". Now, I am looking for an job opportunity
-        that will allow me to gain new knowledge and experience, <br>
-        and further enhance my professional skills.  </p>
+            <p>    I would describe myself as a responsible, self-organized, communicative, confident,
+            hard-working, punctual, diligent, and creative person. <br> I can work effectively
+            both in a team and individually. I can work effectively both in a team and individually.
+            I believe I am a suitable fit for this position. I always live by the motto "there
+            is no goal that cannot be accomplished". Now, I am looking for an job opportunity
+            that will allow me to gain new knowledge and experience, <br>
+            and further enhance my professional skills.  </p>
 
-    </section>
+        </section>
+    </div>
 {% endblock %}
