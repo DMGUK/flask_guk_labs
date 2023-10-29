@@ -97,9 +97,9 @@ def login():
                 flash("You have logged in.", category="flash-success")
                 return redirect(url_for("info"))
             flash("You didn't remember yourself in the site. Please, check you credentials again.", category="flash-error")
-            return redirect(url_for("homepage"))
+            return redirect(url_for("login"))
         flash("You didn't put correct user credentials. Please, check them again.", category="flash-error")
-        return redirect(url_for("homepage"))
+        return redirect(url_for("login"))
     return render_template("login.html", form=form)
 
 @app.route('/info', methods=['GET'])
