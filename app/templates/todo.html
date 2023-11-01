@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% macro render_field(field, placeholder='') %}
+    {% if field.id == 'title' %}
+        {{ field(placeholder="Enter the task's title: ") }}<br><br>
+    {% elif field.id == 'description' %}
+        {{ field(placeholder="Enter the task's description: ") }}<br><br>
+    {% else %}
+        {{ field(placeholder=placeholder) }}<br><br>
+    {% endif %}
+    {% if field.errors %}
+        <ul class="errors">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+
+
+{% block content %}
+    <section>
+        <div class="pageSection">
+            <h2>Todo list</h2>
+            <form action="/add_todo" method="POST" class="todoForm" novalidate>
+                {{ todo_form.csrf_token }}
+                {{ render_field(todo_form.title) }}
+                {{ render_field(todo_form.description) }}
+                {{ render_field(todo_form.submit) }}
+            </form>
+            <table class="todoTable">
+                <thead class="todoTable">
+                    <tr>
+                      <th class="todoTable">No. of task</th>
+                      <th class="todoTable">Task Title</th>
+                      <th class="todoTable">Task Description</th>
+                      <th class="todoTable">Task Status</th>
+                      <th class="todoTable">Task Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="todoTable">
+                    {% for todo in todo_list %}
+                    <tr>
+                        <th class="todoTable">{{ todo.id }}</th>
+                        <td class="todoTable">{{ todo.title }}</td>
+                        <td class="todoTable">{{ todo.description }}</td>
+                        <td class="todoTable">
+                            {% if todo.complete %}
+                                <p class="todoMessageCompleted"><strong>Completed</strong></p>
+                            {% else %}
+                                <p class="todoMessageIncomplete"><strong>In progress</strong></p>
+                            {% endif %}
+                        </td>
+                        <td class="todoTable">
+                            <div class="todoButtons">
+                                {% if todo.complete %}
+                                    <a class="btn btn-secondary" href="/update_todo/{{ todo.id }}">Unmark as complete</a>
+                                {% else %}
+                                    <a class="btn btn-success" href="/update_todo/{{ todo.id }}">Mark as complete</a>
+                                {% endif %}
+                            </div>
+                            <div class="todoButtons">
+                                <a class="btn btn-danger ms-1" href="/delete_todo/{{ todo.id }}">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+  </section>
+{% endblock %}

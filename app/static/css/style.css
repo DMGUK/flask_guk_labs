@@ -102,3 +102,32 @@ main {
 .sessionCookieShow{
     width: 800px;
 }
+
+.tableTodoPadding{
+    padding: 20px;
+}
+
+.todoMessageCompleted{
+    color: #2e6221;
+    background-position: center;
+}
+
+.todoMessageIncomplete{
+    color: #e1cb7e;
+    background-position: center;
+}
+
+.todoForm > #title, .todoForm > #description {
+    width: 250px;
+}
+
+.todoTable{
+    border: 1px solid brown;
+    width: 1000px;
+    text-align: center;
+    padding: 10px;
+}
+
+.todoTable > .todoButtons{
+    padding: 5px;
+}

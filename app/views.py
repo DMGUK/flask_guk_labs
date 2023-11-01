@@ -3,9 +3,33 @@ import random
 from flask import render_template, request, redirect, url_for, session, make_response, jsonify, flash
 from platform import system as os_name
 from datetime import datetime
+from urllib.parse import quote
+
+
 
 from app import app
-from app.forms import LoginForm, ChangePasswordForm
+from app.forms import LoginForm, ChangePasswordForm, ToDoForm
+
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+password = quote("GuK1994@dmytro&03_11")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:{password}@localhost:5432/todo'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    description = db.Column(db.String(200))
+    complete = db.Column(db.Boolean)
+
+with app.app_context():
+    db.create_all()
+
+migrate = Migrate(app, db)
 
 my_skills = [
     {"name": "C++", "logo": "cpp_logo.png"},
@@ -196,3 +220,37 @@ def change_password():
 
     flash("You didn't put any new passwords nor you confirmed any. Please, try once again", category='flash-error')
     return redirect(url_for('info'))
+
+@app.route('/todo')
+def todo():
+    todolist = db.session.query(Todo).all()
+    todo_form = ToDoForm()
+    return render_template("todo.html", todo_list=todolist, active="ToDo", title="ToDo", todo_form=todo_form)
+
+@app.route("/add_todo", methods=["POST"])
+def add_todo():
+    todo_form = ToDoForm()
+    if todo_form.validate_on_submit():
+        title = todo_form.title.data
+        description = todo_form.description.data
+        new_todo = Todo(title=title, description=description, complete=False)
+        db.session.add(new_todo)
+        db.session.commit()
+        flash("Todo task has been successfully added", category='flash-success')
+        return redirect(url_for("todo"))
+    flash("Error adding todo task", category='flash-error')
+    return redirect(url_for("todo"))
+
+@app.route("/update_todo/<int:todo_id>")
+def update_todo(todo_id):
+    todo = Todo.query.get(todo_id)
+    todo.complete = not todo.complete
+    db.session.commit()
+    return redirect(url_for("todo"))
+
+@app.route("/delete_todo/<int:todo_id>")
+def delete_todo(todo_id):
+    todo = Todo.query.get(todo_id)
+    db.session.delete(todo)
+    db.session.commit()
+    return redirect(url_for("todo"))
