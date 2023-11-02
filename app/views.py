@@ -4,11 +4,11 @@ from flask import render_template, request, redirect, url_for, session, make_res
 from platform import system as os_name
 from datetime import datetime
 from urllib.parse import quote
-
+from datetime import date
 
 
 from app import app
-from app.forms import LoginForm, ChangePasswordForm, ToDoForm
+from app.forms import LoginForm, ChangePasswordForm, ToDoForm, FeedbackForm
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -26,8 +26,11 @@ class Todo(db.Model):
     description = db.Column(db.String(200))
     complete = db.Column(db.Boolean)
 
-with app.app_context():
-    db.create_all()
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100))
+    feedback = db.Column(db.String(200))
+    date = db.Column(db.DateTime, default=datetime.now().replace(microsecond=0))
 
 migrate = Migrate(app, db)
 
@@ -254,3 +257,38 @@ def delete_todo(todo_id):
     db.session.delete(todo)
     db.session.commit()
     return redirect(url_for("todo"))
+
+
+@app.route('/feedback')
+def feedback():
+    feedback_list = db.session.query(Feedback).all()
+    feedback_form = FeedbackForm()
+    return render_template("feedbacks.html", feedback_list=feedback_list, active="ToDo", title="ToDo", feedback_form=feedback_form)
+
+@app.route("/add_feedback", methods=["POST"])
+def add_feedback():
+    feedback_form = FeedbackForm()
+    if feedback_form.validate_on_submit():
+        username = feedback_form.username.data
+        feedback_body = feedback_form.feedback.data
+
+        existing_user = Feedback.query.filter_by(username=username).first()
+        if existing_user:
+            flash("Username with its own feedback already exists.", category='flash-error')
+            return redirect(url_for("feedback"))
+
+        new_feedback = Feedback(username=username, feedback=feedback_body)
+        db.session.add(new_feedback)
+        db.session.commit()
+        flash("Feedback has been successfully added", category='flash-success')
+        return redirect(url_for("feedback"))
+    flash("Error adding feedback", category='flash-error')
+    return redirect(url_for("feedback"))
+
+@app.route("/delete_feedback/<int:todo_id>")
+def delete_feedback(todo_id):
+    todo = Feedback.query.get(todo_id)
+    db.session.delete(todo)
+    db.session.commit()
+    flash("Feedback has been successfully deleted", category='flash-success')
+    return redirect(url_for("feedback"))

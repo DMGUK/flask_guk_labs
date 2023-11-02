@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% macro render_field(field, placeholder='') %}
+    {% if field.id == 'username' %}
+        {{ field(placeholder="Enter your username: ") }}<br><br>
+    {% elif field.id == 'feedback' %}
+        {{ field(placeholder="Enter your feedback: ") }}<br><br>
+    {% else %}
+        {{ field(placeholder=placeholder) }}<br><br>
+    {% endif %}
+    {% if field.errors %}
+        <ul class="errors">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+
+
+{% block content %}
+    <section>
+        <div class="pageSection">
+            <h2>Feedbacks</h2>
+            <p><strong>I'd like to hear a few words about this site. Please, enter your feedback here. :)</strong></p>
+            <form action="/add_feedback" method="POST" class="todoForm" novalidate>
+                {{ feedback_form.csrf_token }}
+                {{ render_field(feedback_form.username) }}
+                {{ render_field(feedback_form.feedback) }}
+                {{ render_field(feedback_form.submit) }}
+            </form>
+            <table class="feedbackTable">
+                <thead class="feedbackTable">
+                    <tr>
+                      <th class="feedbackTable">No. of feedback</th>
+                      <th class="feedbackTable">Username</th>
+                      <th class="feedbackTable">Feedback</th>
+                      <th class="feedbackTable">Date</th>
+                      <th class="feedbackTable">Delete Feedback</th>
+                    </tr>
+                </thead>
+                <tbody class="feedbackTable">
+                    {% for feedback in feedback_list %}
+                    <tr>
+                        <th class="feedbackTable">{{ feedback.id }}</th>
+                        <td class="feedbackTable">{{ feedback.username }}</td>
+                        <td class="feedbackTable">{{ feedback.feedback }}</td>
+                        <td class="feedbackTable">{{ feedback.date }}</td>
+                        <td class="feedbackTable">
+                            <div class="feedbackButtons">
+                                <a class="btn btn-danger ms-1" href="/delete_feedback/{{ feedback.id }}">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+  </section>
+{% endblock %}

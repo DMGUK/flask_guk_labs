@@ -17,3 +17,9 @@ class ToDoForm(FlaskForm):
     title = StringField('Todo Title', validators=[DataRequired("This field is required"), Length(min=1, max=100)])
     description = StringField('', validators=[DataRequired("This field is required"), Length(min=1 , max=200)])
     submit = SubmitField("Add new task")
+
+class FeedbackForm(FlaskForm):
+    username = StringField('Feedback Username', validators=[DataRequired("This field is required"), Length(min=1, max=100)])
+    feedback = StringField('', validators=[DataRequired("This field is required"), Length(min=1 , max=200)])
+    submit = SubmitField("Add new task")
+

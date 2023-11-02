@@ -131,3 +131,14 @@ main {
 .todoTable > .todoButtons{
     padding: 5px;
 }
+
+.feedbackTable{
+    border: 1px solid brown;
+    width: 1000px;
+    text-align: center;
+    padding: 10px;
+}
+
+.feedbackTable > .feedbackButtons{
+    padding: 5px;
+}
