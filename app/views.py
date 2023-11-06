@@ -1,36 +1,14 @@
+import io
 import json
 import random
-from flask import render_template, request, redirect, url_for, session, make_response, jsonify, flash
+from flask import render_template, request, redirect, url_for, session, make_response, flash, send_file
 from platform import system as os_name
 from datetime import datetime
-from urllib.parse import quote
-from datetime import date
-
-
-from app import app
-from app.forms import LoginForm, ChangePasswordForm, ToDoForm, FeedbackForm
-
-from flask_sqlalchemy import SQLAlchemy
+from app import app, db
+from app.forms import LoginForm, ChangePasswordForm, ToDoForm, FeedbackForm, SignUpForm
 from flask_migrate import Migrate
 
-password = quote("GuK1994@dmytro&03_11")
-
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:{password}@localhost:5432/todo'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100))
-    description = db.Column(db.String(200))
-    complete = db.Column(db.Boolean)
-
-class Feedback(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    feedback = db.Column(db.String(200))
-    date = db.Column(db.DateTime, default=datetime.now().replace(microsecond=0))
+from app.models import Todo, Feedback, Users
 
 migrate = Migrate(app, db)
 
@@ -101,33 +79,53 @@ def generate_link():
 def contacts():
     return render_template('contacts.html')
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignUpForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        confirm_password = form.confirm_password.data
+        image_file = form.image_file.data
+        if password == confirm_password:
+
+            new_user = Users(username=username, email=email, password=password, image_file=image_file)
+            db.session.add(new_user)
+            db.session.commit()
+        flash("You have successfully signed up.", category="flash-success")
+        return redirect(url_for("login"))
+    return render_template("signup.html", form=form)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        with open('app/admin.json') as f:
-            admin_data = json.load(f)
-
-        json_username = admin_data['username']
-        json_password = admin_data['password']
-        form_username = form.username.data
+        user = Users.query.filter_by(email=form.email.data).first()
+        form_email = form.email.data
         form_password = form.password.data
         form_remember = form.remember.data
-        if form_username == json_username and form_password == json_password:
+        if user and user.validate_password(form_password) and user.email == form.email.data:
             if form_remember == True:
                 user_id = random.randint(1, 10000)
                 session['userId'] = user_id
-                session['username'] = form_username
+                session['username'] = user.username
+                session['email'] = form_email
                 session['password'] = form_password
                 session['remember'] = form_remember
                 flash("You have logged in.", category="flash-success")
                 return redirect(url_for("info"))
-            flash("You didn't remember yourself in the site. Please, check you credentials again.", category="flash-error")
+            flash("You didn't remember yourself in the site. Please, check your input again.", category="flash-error")
             return redirect(url_for("login"))
         flash("You didn't put correct user credentials. Please, check them again.", category="flash-error")
         return redirect(url_for("login"))
     return render_template("login.html", form=form)
+
+@app.route('/users')
+def users():
+    all_users = Users.query.all()
+    return render_template('users.html', all_users=all_users)
 
 @app.route('/info', methods=['GET'])
 def info():

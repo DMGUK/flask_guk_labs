@@ -29,38 +29,38 @@
                 {{ render_field(todo_form.description) }}
                 {{ render_field(todo_form.submit) }}
             </form>
-            <table class="todoTable">
-                <thead class="todoTable">
+            <table class="databaseOutputTable">
+                <thead class="databaseOutputTable">
                     <tr>
-                      <th class="todoTable">No. of task</th>
-                      <th class="todoTable">Task Title</th>
-                      <th class="todoTable">Task Description</th>
-                      <th class="todoTable">Task Status</th>
-                      <th class="todoTable">Task Actions</th>
+                      <th class="databaseOutputTable">No. of task</th>
+                      <th class="databaseOutputTable">Task Title</th>
+                      <th class="databaseOutputTable">Task Description</th>
+                      <th class="databaseOutputTable">Task Status</th>
+                      <th class="databaseOutputTable">Task Actions</th>
                     </tr>
                 </thead>
-                <tbody class="todoTable">
+                <tbody class="databaseOutputTable">
                     {% for todo in todo_list %}
                     <tr>
-                        <th class="todoTable">{{ todo.id }}</th>
-                        <td class="todoTable">{{ todo.title }}</td>
-                        <td class="todoTable">{{ todo.description }}</td>
-                        <td class="todoTable">
+                        <th class="databaseOutputTable">{{ todo.id }}</th>
+                        <td class="databaseOutputTable">{{ todo.title }}</td>
+                        <td class="databaseOutputTable">{{ todo.description }}</td>
+                        <td class="databaseOutputTable">
                             {% if todo.complete %}
                                 <p class="todoMessageCompleted"><strong>Completed</strong></p>
                             {% else %}
                                 <p class="todoMessageIncomplete"><strong>In progress</strong></p>
                             {% endif %}
                         </td>
-                        <td class="todoTable">
-                            <div class="todoButtons">
+                        <td class="databaseOutputTable">
+                            <div class="databaseOutputButtons">
                                 {% if todo.complete %}
                                     <a class="btn btn-secondary" href="/update_todo/{{ todo.id }}">Unmark as complete</a>
                                 {% else %}
                                     <a class="btn btn-success" href="/update_todo/{{ todo.id }}">Mark as complete</a>
                                 {% endif %}
                             </div>
-                            <div class="todoButtons">
+                            <div class="databaseOutputButtons">
                                 <a class="btn btn-danger ms-1" href="/delete_todo/{{ todo.id }}">Delete</a>
                             </div>
                         </td>

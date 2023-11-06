@@ -78,11 +78,13 @@ main {
 }
 .flash-success{
     color: darkgreen;
+    font-size: 24px;
     padding: 10px;
 }
 
 .flash-error{
     color: darkred;
+    font-size: 24px;
     padding: 10px;
 }
 
@@ -121,24 +123,13 @@ main {
     width: 250px;
 }
 
-.todoTable{
+.databaseOutputTable{
     border: 1px solid brown;
     width: 1000px;
     text-align: center;
     padding: 10px;
 }
 
-.todoTable > .todoButtons{
-    padding: 5px;
-}
-
-.feedbackTable{
-    border: 1px solid brown;
-    width: 1000px;
-    text-align: center;
-    padding: 10px;
-}
-
-.feedbackTable > .feedbackButtons{
+.databaseOutputTable > .databaseOutputButtons{
     padding: 5px;
 }

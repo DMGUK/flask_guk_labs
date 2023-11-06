@@ -30,25 +30,25 @@
                 {{ render_field(feedback_form.feedback) }}
                 {{ render_field(feedback_form.submit) }}
             </form>
-            <table class="feedbackTable">
-                <thead class="feedbackTable">
+            <table class="databaseOutputTable">
+                <thead class="databaseOutputTable">
                     <tr>
-                      <th class="feedbackTable">No. of feedback</th>
-                      <th class="feedbackTable">Username</th>
-                      <th class="feedbackTable">Feedback</th>
-                      <th class="feedbackTable">Date</th>
-                      <th class="feedbackTable">Delete Feedback</th>
+                      <th class="databaseOutputTable">No. of feedback</th>
+                      <th class="databaseOutputTable">Username</th>
+                      <th class="databaseOutputTable">Feedback</th>
+                      <th class="databaseOutputTable">Date</th>
+                      <th class="databaseOutputTable">Delete Feedback</th>
                     </tr>
                 </thead>
-                <tbody class="feedbackTable">
+                <tbody class="databaseOutputTable">
                     {% for feedback in feedback_list %}
                     <tr>
-                        <th class="feedbackTable">{{ feedback.id }}</th>
-                        <td class="feedbackTable">{{ feedback.username }}</td>
-                        <td class="feedbackTable">{{ feedback.feedback }}</td>
-                        <td class="feedbackTable">{{ feedback.date }}</td>
-                        <td class="feedbackTable">
-                            <div class="feedbackButtons">
+                        <th class="databaseOutputTable">{{ feedback.id }}</th>
+                        <td class="databaseOutputTable">{{ feedback.username }}</td>
+                        <td class="databaseOutputTable">{{ feedback.feedback }}</td>
+                        <td class="databaseOutputTable">{{ feedback.date }}</td>
+                        <td class="databaseOutputTable">
+                            <div class="databaseOutputButtons">
                                 <a class="btn btn-danger ms-1" href="/delete_feedback/{{ feedback.id }}">Delete</a>
                             </div>
                         </td>

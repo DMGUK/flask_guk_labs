@@ -3,21 +3,19 @@
 {% block title %}Login{% endblock %}
 
 {% macro render_field(field, placeholder='') %}
-    {% if field.type == 'BooleanField' %}
+    {% if field.name == 'remember' %}
         {{ field.label }} {{ field(placeholder='Keep me logged in') }}<br><br>
-    {% elif field.type == 'PasswordField' %}
+    {% elif field.name == 'password' %}
         {{ field(placeholder='Enter your password: ') }}<br><br>
-    {% elif field.type == 'StringField' %}
-        {{ field(placeholder='Enter your username: ') }}<br><br>
+    {% elif field.name == 'email' %}
+        {{ field(placeholder='Enter your email: ') }}<br><br>
     {% else %}
         {{ field(placeholder=placeholder) }}<br><br>
     {% endif %}
     {% if field.errors %}
-        <ul class="errors">
-            {% for error in field.errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
+        {% for error in field.errors %}
+            <p class="flash-error"><strong>{{ error }}</strong></p>
+        {% endfor %}
     {% endif %}
 {% endmacro %}
 
@@ -26,7 +24,7 @@
         <h2>Login form</h2><br>
         <form action="/login" method="POST" novalidate>
             {{ form.csrf_token }}
-            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
             {{ render_field(form.password) }}
             {{ render_field(form.remember) }}
             {{ render_field(form.submit) }}
