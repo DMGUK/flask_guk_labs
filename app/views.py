@@ -86,13 +86,10 @@ def signup():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        confirm_password = form.confirm_password.data
         image_file = form.image_file.data
-        if password == confirm_password:
-
-            new_user = Users(username=username, email=email, password=password, image_file=image_file)
-            db.session.add(new_user)
-            db.session.commit()
+        new_user = Users(username=username, email=email, password=password, image_file=image_file)
+        db.session.add(new_user)
+        db.session.commit()
         flash("You have successfully signed up.", category="flash-success")
         return redirect(url_for("login"))
     return render_template("signup.html", form=form)
