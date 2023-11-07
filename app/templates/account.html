@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}My Account{% endblock %}
+{% set username = current_user.username %}
+{% block content %}
+    <div class="pageSection">
+        <h2>Hi, {{ username }} and welcome to the resume website</h2>
+        <p><b>You've successfully logged in, and you can safely begin to use this site. Good luck !!!</b></p>
+        <p><b>Your unique ID is : {{ user_id }}</b></p>
+        <div>
+            <strong><a href="/info" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Go to the main user page</a></strong>
+        </div>
+    </div>
+{% endblock %}

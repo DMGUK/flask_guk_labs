@@ -23,6 +23,7 @@ $(document).ready(function () {
     });
 });
 
+
 document.getElementById('skillForm').addEventListener('submit', function(event) {
     event.preventDefault();
 

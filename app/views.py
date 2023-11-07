@@ -1,16 +1,20 @@
-import io
-import json
 import random
-from flask import render_template, request, redirect, url_for, session, make_response, flash, send_file
+from flask import render_template, request, redirect, url_for, make_response, flash
 from platform import system as os_name
 from datetime import datetime
-from app import app, db
+
+from flask_login import login_user, current_user, logout_user, login_required
+
+from app import app, db, bcrypt
 from app.forms import LoginForm, ChangePasswordForm, ToDoForm, FeedbackForm, SignUpForm
 from flask_migrate import Migrate
 
 from app.models import Todo, Feedback, Users
 
+
 migrate = Migrate(app, db)
+
+session_cookie_keys = ['session', 'pga4_session', 'remember_token']
 
 my_skills = [
     {"name": "C++", "logo": "cpp_logo.png"},
@@ -81,6 +85,8 @@ def contacts():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('info'))
     form = SignUpForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -96,6 +102,8 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('info'))
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -103,37 +111,40 @@ def login():
         form_email = form.email.data
         form_password = form.password.data
         form_remember = form.remember.data
-        if user and user.validate_password(form_password) and user.email == form.email.data:
+        if user and user.validate_password(form_password) and user.email == form_email:
             if form_remember == True:
-                user_id = random.randint(1, 10000)
-                session['userId'] = user_id
-                session['username'] = user.username
-                session['email'] = form_email
-                session['password'] = form_password
-                session['remember'] = form_remember
+                login_user(user, form_remember)
                 flash("You have logged in.", category="flash-success")
-                return redirect(url_for("info"))
+                return redirect(url_for("account"))
             flash("You didn't remember yourself in the site. Please, check your input again.", category="flash-error")
             return redirect(url_for("login"))
         flash("You didn't put correct user credentials. Please, check them again.", category="flash-error")
         return redirect(url_for("login"))
     return render_template("login.html", form=form)
 
+@app.route('/account')
+@login_required
+def account():
+    user_id = random.randint(1, 10000)
+    return render_template('account.html', user_id=user_id)
+
 @app.route('/users')
+@login_required
 def users():
     all_users = Users.query.all()
     return render_template('users.html', all_users=all_users)
 
 @app.route('/info', methods=['GET'])
+@login_required
 def info():
     cookies = request.cookies
     form = ChangePasswordForm()
-
     return render_template('info.html', cookies=cookies, form=form)
 
 @app.route('/logout')
 def logout():
-    session.clear()
+    logout_user()
+    flash("You have logged out.", category="flash-success")
     return redirect(url_for('login'))
 
 def set_cookie(key, value, max_age):
@@ -161,6 +172,7 @@ def add_cookie():
 
 @app.route('/remove_cookie/', methods=['GET'])
 @app.route('/remove_cookie/<key>', methods=['GET'])
+@login_required
 def remove_cookie(key=None):
 
     key = request.args.get('key')
@@ -175,12 +187,13 @@ def remove_cookie(key=None):
         return redirect(url_for('info'))
 
 @app.route('/remove_all_cookies', methods=['GET'])
+@login_required
 def remove_all_cookies():
     response = make_response(redirect('info'))
     cookies = request.cookies
 
     for key in cookies.keys():
-        if key != 'session':
+        if key not in session_cookie_keys:
             response.delete_cookie(key)
 
     flash("All cookies removed successfully!", category='flash-success')
@@ -195,20 +208,8 @@ def change_password():
         confirm_new_password = form.confirm_password.data
         if new_password != '':
             if new_password == confirm_new_password:
-                session['password'] = new_password
-
-                with open('app/admin.json') as f:
-                    admin_data = json.load(f)
-
-                new_admin_data = {
-                    'username': admin_data['username'],
-                    'password': new_password
-                }
-
-                new_passwd_json = json.dumps(new_admin_data, indent=2)
-
-                with open("app/admin.json", "w") as outfile:
-                    outfile.write(new_passwd_json)
+                current_user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+                db.session.commit()
 
                 flash("Password has been changed successfully", category='flash-success')
                 return redirect(url_for('info'))
@@ -220,6 +221,7 @@ def change_password():
     return redirect(url_for('info'))
 
 @app.route('/todo')
+@login_required
 def todo():
     todolist = db.session.query(Todo).all()
     todo_form = ToDoForm()
@@ -240,6 +242,7 @@ def add_todo():
     return redirect(url_for("todo"))
 
 @app.route("/update_todo/<int:todo_id>")
+@login_required
 def update_todo(todo_id):
     todo = Todo.query.get(todo_id)
     todo.complete = not todo.complete
@@ -247,6 +250,7 @@ def update_todo(todo_id):
     return redirect(url_for("todo"))
 
 @app.route("/delete_todo/<int:todo_id>")
+@login_required
 def delete_todo(todo_id):
     todo = Todo.query.get(todo_id)
     db.session.delete(todo)
@@ -255,6 +259,7 @@ def delete_todo(todo_id):
 
 
 @app.route('/feedback')
+@login_required
 def feedback():
     feedback_list = db.session.query(Feedback).all()
     feedback_form = FeedbackForm()
@@ -281,6 +286,7 @@ def add_feedback():
     return redirect(url_for("feedback"))
 
 @app.route("/delete_feedback/<int:todo_id>")
+@login_required
 def delete_feedback(todo_id):
     todo = Feedback.query.get(todo_id)
     db.session.delete(todo)

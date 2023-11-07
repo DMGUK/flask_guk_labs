@@ -1,10 +1,13 @@
 from datetime import datetime
 
-from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
 
-from app import db, app
+from app import db, bcrypt, login_manager
 
-bcrypt = Bcrypt(app)
+@login_manager.user_loader
+def user_loader(user_id):
+    return Users.query.get(int(user_id))
+
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +22,7 @@ class Feedback(db.Model):
     date = db.Column(db.DateTime, default=datetime.now().replace(microsecond=0))
 
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)

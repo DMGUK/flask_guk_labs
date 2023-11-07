@@ -1,24 +1,50 @@
-{% set menu = {'Homepage': url_for('homepage'),
+{% set menu_logged_in = {'Homepage': url_for('homepage'),
+ 'About Me': url_for('about_me'), 'My Experience': url_for('my_experience'),
+ 'My Projects': url_for('my_projects'), 'Find Me': url_for('contacts'),
+ 'Todo': url_for('todo'), 'Feedbacks': url_for('feedback') }%}
+{% set menu_logged_out = {'Homepage': url_for('homepage'),
  'About Me': url_for('about_me'), 'My Experience': url_for('my_experience'), 'My Projects': url_for('my_projects'),
  'Find Me': url_for('contacts'), 'Login': url_for('login'), 'Sign Up': url_for('signup'),
  'Todo': url_for('todo'), 'Feedbacks': url_for('feedback') }%}
 
 <nav>
     <ul>
-        {% for name, url in menu.items() %}
-            <li>
-                <a class="toggleButton" href="{{ url }}" data-title="{{ name | title }}">{{ name | title }}</a>
-            </li>
+        {% if current_user.is_authenticated %}
+            <li><a class="toggleButton" href="{{ url_for('info') }}" data-title="My Profile">My Profile</a></li>
             <br>
-        {% endfor %}
-        <li>
-            <form id="skillForm">
-                <label>Enter the number of the skill to find: </label>
-                <input type="text" name="id" id="inputID" class="inputID" placeholder="Enter the ID here">
-                <br><br>
-                <button class="buttonSkillForm" type="submit" onclick="generateLink()">Find skill</button>
-            </form>
-            <a class="toggleButton" id="generatedLink" href=""></a>
-        </li>
+            <li><a class="toggleButton" href="{{ url_for('logout') }}" data-title="Logout">Logout</a></li>
+            <br>
+            {% for name, url in menu_logged_in.items() %}
+                <li>
+                    <a class="toggleButton" href="{{ url }}" data-title="{{ name | title }}">{{ name | title }}</a>
+                </li>
+                <br>
+            {% endfor %}
+            <li>
+                <form id="skillForm">
+                    <label>Enter the number of the skill to find: </label>
+                    <input type="text" name="id" id="inputID" class="inputID" placeholder="Enter the ID here">
+                    <br><br>
+                    <button class="buttonSkillForm" type="submit" onclick="generateLink()">Find skill</button>
+                </form>
+                <a class="toggleButton" id="generatedLink" href=""></a>
+            </li>
+        {% else %}
+            {% for name, url in menu_logged_out.items() %}
+                <li>
+                    <a class="toggleButton" href="{{ url }}" data-title="{{ name | title }}">{{ name | title }}</a>
+                </li>
+                <br>
+            {% endfor %}
+            <li>
+                <form id="skillForm">
+                    <label>Enter the number of the skill to find: </label>
+                    <input type="text" name="id" id="inputID" class="inputID" placeholder="Enter the ID here">
+                    <br><br>
+                    <button class="buttonSkillForm" type="submit" onclick="generateLink()">Find skill</button>
+                </form>
+                <a class="toggleButton" id="generatedLink" href=""></a>
+            </li>
+        {% endif %}
     </ul>
 </nav>

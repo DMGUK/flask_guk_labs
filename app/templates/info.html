@@ -2,8 +2,8 @@
 
 {% block title %}Info{% endblock %}
 
-{% set username = session['username'] %}
-{% set userId = session['userId'] %}
+{% set session_cookie_keys = ['session', 'pga4_session', 'remember_token'] %}
+
 
 {% macro render_field(field, placeholder='') %}
     {% if field.id == 'password' %}
@@ -24,17 +24,12 @@
 
 {% block content %}
     <div class="pageSection">
-        <h2>Hi, {{ username }} and welcome to the resume website</h2>
-        <p><b>You've successfully logged in and you can safely begin to use this site. Good luck !!!</b></p>
-        <p><b>Your unique ID is : {{ userId }}</b></p>
-        <div>
-            <strong><a href="/logout" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Log out</a></strong>
-        </div>
+        <h2>User's home page</h2>
         <br>
+        <h2>Show the list of users</h2>
         <div>
             <strong><a href="/users" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">See list of signed up users</a></strong>
         </div>
-
         <br>
         <h2>Create a cookie</h2>
         <form action="/add_cookie" method="POST">
@@ -66,11 +61,13 @@
         <div class = "sessionCookieShow">
             <h2>Session(User, Database) cookie</h2>
             {% for key, value in cookies.items() %}
-                {% if key == 'session' or key == 'pga4_session' %}
-                    <p><strong>Value of the {{ key }} cookie is :</strong>
-                    {% set wrapped_value = value|wordwrap(100) %}
-                        {{ wrapped_value|safe }}</p>
-                {% endif %}
+                {% for session_key in session_cookie_keys %}
+                    {% if key == session_key %}
+                        <p><strong>Value of the {{ key }} cookie is :</strong>
+                        {% set wrapped_value = value|wordwrap(100) %}
+                            {{ wrapped_value|safe }}</p>
+                    {% endif %}
+                {% endfor %}
             {% endfor %}
         </div>
         <br><br>
@@ -85,7 +82,7 @@
             <tbody class = "cookiesTable">
                 {% set non_session_cookies = {} %}
                 {% for key, value in cookies.items() %}
-                    {% if key != 'session' and key != 'pga4_session' %}
+                    {% if key not in session_cookie_keys %}
                         {% set _ = non_session_cookies.update({key: value}) %}
                     {% endif %}
                 {% endfor %}

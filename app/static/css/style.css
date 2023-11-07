@@ -133,3 +133,8 @@ main {
 .databaseOutputTable > .databaseOutputButtons{
     padding: 5px;
 }
+
+#mainContent > .info{
+    padding: 10px;
+    color: darkred;
+}
