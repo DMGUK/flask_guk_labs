@@ -1,13 +1,56 @@
 {% extends 'base.html' %}
+
 {% block title %}My Account{% endblock %}
-{% set username = current_user.username %}
+
+{% macro render_field(field, placeholder='') %}
+    {% if field.name == 'username' %}
+        {{ field(placeholder='Enter your new username:', class_='upper-corner-input') }}<br><br>
+    {% elif field.name == 'email' %}
+        {{ field(placeholder='Enter your new email:', class_='upper-corner-input') }}<br><br>
+    {% elif field.name == 'bio' %}
+        {{ field(placeholder='Say a few words about yourself:', class_='upper-corner-input') }}<br><br>
+    {% else %}
+        {{ field(placeholder=placeholder, class_='upper-corner-input') }}<br><br>
+    {% endif %}
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <p class="flash-error"><strong>{{ error }}</strong></p>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+
+
 {% block content %}
     <div class="pageSection">
-        <h2>Hi, {{ username }} and welcome to the resume website</h2>
+        <h2>Hi, {{ current_user.username }} and welcome to the resume website</h2>
         <p><b>You've successfully logged in, and you can safely begin to use this site. Good luck !!!</b></p>
         <p><b>Your unique ID is : {{ user_id }}</b></p>
+        <p><b>Your email is : {{ current_user.email }}</b></p>
+        <p><b>You were seen last on {{ current_user.last_seen }}</b></p>
+        <p><b>Your profile image : </b></p>
+
+        {% set exists = url_for('static', filename=profile_image_path) | file_exists %}
+
+        {% if profile_image_path and exists %}
+            <img src="{{ url_for('static', filename=profile_image_path) }}" alt="User Profile Image" width="200" height="200"><br><br>
+        {% else %}
+            <img src="{{ url_for('static', filename='profile_images/default.jpg') }}" alt="Default Profile Image" width="200" height="200"><br><br>
+        {% endif %}
+
         <div>
             <strong><a href="/info" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Go to the main user page</a></strong>
         </div>
+        <br>
+        <h2>Edit your user data</h2>
+        <br>
+        <form id = "updateAccountForm" action="/account" method="POST" enctype="multipart/form-data" novalidate>
+            {{ update_account_form.csrf_token }}
+            {{ render_field(update_account_form.username) }}
+            {{ render_field(update_account_form.email) }}
+            {{ render_field(update_account_form.bio) }}
+            {{ render_field(update_account_form.image) }}
+            {{ render_field(update_account_form.submit) }}
+        </form>
     </div>
 {% endblock %}

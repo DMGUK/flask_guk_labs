@@ -10,7 +10,7 @@
 <nav>
     <ul>
         {% if current_user.is_authenticated %}
-            <li><a class="toggleButton" href="{{ url_for('info') }}" data-title="My Profile">My Profile</a></li>
+            <li><a class="toggleButton" href="{{ url_for('account') }}" data-title="My Profile">My Profile</a></li>
             <br>
             <li><a class="toggleButton" href="{{ url_for('logout') }}" data-title="Logout">Logout</a></li>
             <br>

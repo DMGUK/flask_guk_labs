@@ -138,3 +138,11 @@ main {
     padding: 10px;
     color: darkred;
 }
+
+#changePasswordForm > #old_password, #new_password, #confirm_new_password{
+    width: 300px;
+}
+
+#updateAccountForm > #bio{
+    width: 1000px;
+}

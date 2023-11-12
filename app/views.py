@@ -1,18 +1,23 @@
+import os
 import random
+import secrets
+from os.path import basename, splitext, isfile
+
 from flask import render_template, request, redirect, url_for, make_response, flash
 from platform import system as os_name
 from datetime import datetime
-
+from werkzeug.utils import secure_filename
 from flask_login import login_user, current_user, logout_user, login_required
-
+from PIL import Image
 from app import app, db, bcrypt
-from app.forms import LoginForm, ChangePasswordForm, ToDoForm, FeedbackForm, SignUpForm
+from app.forms import LoginForm, ChangePasswordForm, ToDoForm, FeedbackForm, SignUpForm, UpdateAccountForm
 from flask_migrate import Migrate
 
 from app.models import Todo, Feedback, Users
-
+from config import ALLOWED_EXTENSIONS, MAX_IMAGE_SIZE, UPLOAD_FOLDER
 
 migrate = Migrate(app, db)
+
 
 session_cookie_keys = ['session', 'pga4_session', 'remember_token']
 
@@ -27,11 +32,42 @@ my_skills = [
     {"name": "PostgreSQL", "logo": "postgresql_logo.png"}
 ]
 
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def file_exists(file_path):
+    full_path = os.path.normpath(os.path.join(app.root_path, file_path.lstrip('/')))
+    return isfile(full_path)
+
+
+app.jinja_env.filters['file_exists'] = file_exists
+
+
 def user_details():
     user_os = os_name()
     user_agent = request.headers.get('User-Agent')
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     return [user_os, user_agent, current_time]
+
+
+def resize_and_save_image(file, destination_folder, target_size):
+    img = Image.open(file)
+    img.thumbnail(target_size)
+
+    random_string = secrets.token_hex(10)
+    original_filename, file_extension = os.path.splitext(secure_filename(file.filename))
+    new_filename = f"{random_string}{file_extension}"
+    image_path = os.path.join(destination_folder, new_filename)
+
+    try:
+        img.save(image_path)
+        return image_path
+    except Exception as e:
+        flash(f"Error saving image: {e}", category="flash-error")
+        return None
+
 @app.after_request
 def add_cache_control(response):
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -83,21 +119,32 @@ def generate_link():
 def contacts():
     return render_template('contacts.html')
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('info'))
+
     form = SignUpForm()
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
         image_file = form.image_file.data
-        new_user = Users(username=username, email=email, password=password, image_file=image_file)
+
+        if image_file and allowed_file(image_file.filename):
+            image_path = resize_and_save_image(image_file, UPLOAD_FOLDER, MAX_IMAGE_SIZE)
+            image_path = os.path.join('profile_images', os.path.basename(image_path))
+        else:
+            image_path = None  #
+
+        new_user = Users(username=username, email=email, password=password, image_file=image_path)
         db.session.add(new_user)
         db.session.commit()
+
         flash("You have successfully signed up.", category="flash-success")
         return redirect(url_for("login"))
+
     return render_template("signup.html", form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -122,17 +169,89 @@ def login():
         return redirect(url_for("login"))
     return render_template("login.html", form=form)
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     user_id = random.randint(1, 10000)
-    return render_template('account.html', user_id=user_id)
+    user_image_file = current_user.image_file
+
+    update_account_form = UpdateAccountForm(
+        username=current_user.username,
+        email=current_user.email,
+    )
+
+    if update_account_form.validate_on_submit():
+        old_image_path = current_user.image_file
+        old_file_name = os.path.basename(old_image_path)
+        full_old_image_path = os.path.join(app.static_folder, 'profile_images', old_file_name)
+        new_image_file = update_account_form.image.data
+        allow = allowed_file(new_image_file.filename)
+        check = new_image_file and allow
+        if check:
+            image_path = resize_and_save_image(new_image_file, UPLOAD_FOLDER, MAX_IMAGE_SIZE)
+            if image_path:
+                current_user.image_file = os.path.join('profile_images', os.path.basename(image_path))
+                if full_old_image_path and os.path.isfile(full_old_image_path):
+                    os.remove(full_old_image_path)
+
+        current_user.username = update_account_form.username.data
+        current_user.email = update_account_form.email.data
+        current_user.bio = update_account_form.bio.data
+        db.session.commit()
+        flash("Account information updated successfully!", category='flash-success')
+        return redirect(url_for('account', form=update_account_form))
+
+    if user_image_file:
+        file_name = basename(user_image_file)
+        profile_image_path = f'profile_images/{file_name}'
+        update_account_form.username.data = current_user.username
+        update_account_form.email.data = current_user.email
+        update_account_form.bio.data = current_user.bio
+        return render_template('account.html', user_id=user_id, profile_image_path=profile_image_path, update_account_form=update_account_form)
+    else:
+        profile_image_path = f'profile_images/default.jpg'
+        update_account_form.username.data = current_user.username
+        update_account_form.email.data = current_user.email
+        update_account_form.bio.data = current_user.bio
+        return render_template('account.html', user_id=user_id, profile_image_path=profile_image_path, update_account_form=update_account_form)
+
+@app.after_request
+def after_request(response):
+    if request.endpoint != 'signup' and current_user.is_authenticated:
+        current_user.last_seen = datetime.now().replace(microsecond=0)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error while updating last_seen: {str(e)}', 'flash-error')
+
+    return response
 
 @app.route('/users')
 @login_required
 def users():
     all_users = Users.query.all()
-    return render_template('users.html', all_users=all_users)
+
+    user_data = []
+
+    for user in all_users:
+        user_image_file = user.image_file
+
+        if user_image_file:
+            file_name = os.path.basename(user_image_file)
+            profile_image_path = f'profile_images/{file_name}'
+        else:
+            profile_image_path = 'profile_images/default.jpg'
+
+        user_data.append({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'profile_image_path': profile_image_path
+        })
+
+    return render_template('users.html', user_data=user_data)
+
 
 @app.route('/info', methods=['GET'])
 @login_required
@@ -199,26 +318,26 @@ def remove_all_cookies():
     flash("All cookies removed successfully!", category='flash-success')
     return response
 
-@app.route('/change_password', methods=['POST'])
+@app.route('/change_password', methods=['GET', 'POST'])
+@login_required
 def change_password():
     form = ChangePasswordForm()
 
     if form.validate_on_submit():
-        new_password = form.password.data
-        confirm_new_password = form.confirm_password.data
+        new_password = form.new_password.data
+        confirm_new_password = form.confirm_new_password.data
         if new_password != '':
             if new_password == confirm_new_password:
                 current_user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
                 db.session.commit()
 
                 flash("Password has been changed successfully", category='flash-success')
-                return redirect(url_for('info'))
+                return redirect(url_for('change_password'))
 
-            flash("You didn't confirm your password", category='flash-error')
-            return redirect(url_for('info'))
+            flash("Error changing your password", category='flash-error')
+            return redirect(url_for('change_password'))
 
-    flash("You didn't put any new passwords nor you confirmed any. Please, try once again", category='flash-error')
-    return redirect(url_for('info'))
+    return render_template('change_password.html', form=form)
 
 @app.route('/todo')
 @login_required

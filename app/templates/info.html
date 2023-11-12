@@ -4,24 +4,6 @@
 
 {% set session_cookie_keys = ['session', 'pga4_session', 'remember_token'] %}
 
-
-{% macro render_field(field, placeholder='') %}
-    {% if field.id == 'password' %}
-        {{ field(placeholder='Enter your password: ') }}<br><br>
-    {% elif field.id == 'confirm_password' %}
-        {{ field(placeholder='Confirm your password: ') }}<br><br>
-    {% else %}
-        {{ field(placeholder=placeholder) }}<br><br>
-    {% endif %}
-    {% if field.errors %}
-        <ul class="errors">
-            {% for error in field.errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endmacro %}
-
 {% block content %}
     <div class="pageSection">
         <h2>User's home page</h2>
@@ -103,11 +85,8 @@
         </table>
         <br><br>
         <h2>Change your password</h2>
-        <form action="/change_password" method="POST" novalidate>
-            {{ form.csrf_token }}
-            {{ render_field(form.password) }}
-            {{ render_field(form.confirm_password) }}
-            {{ render_field(form.submit) }}
-        </form>
+        <div>
+            <strong><a href="/change_password" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Set your new password</a></strong>
+        </div>
     </div>
 {% endblock %}
