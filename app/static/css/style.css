@@ -145,4 +145,5 @@ main {
 
 #updateAccountForm > #bio{
     width: 1000px;
+    height: 300px;
 }

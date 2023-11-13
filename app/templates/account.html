@@ -29,11 +29,11 @@
         <p><b>Your email is : {{ current_user.email }}</b></p>
         <p><b>You were seen last on {{ current_user.last_seen }}</b></p>
         <p><b>Your profile image : </b></p>
-
-        {% set exists = url_for('static', filename=profile_image_path) | file_exists %}
+        {% set profile_image_path = current_user.image_file %}
+        {% set exists = url_for('static', filename='profile_images/' + profile_image_path) | file_exists %}
 
         {% if profile_image_path and exists %}
-            <img src="{{ url_for('static', filename=profile_image_path) }}" alt="User Profile Image" width="200" height="200"><br><br>
+            <img src="{{ url_for('static', filename='profile_images/' + profile_image_path) }}" alt="User Profile Image" width="200" height="200"><br><br>
         {% else %}
             <img src="{{ url_for('static', filename='profile_images/default.jpg') }}" alt="Default Profile Image" width="200" height="200"><br><br>
         {% endif %}

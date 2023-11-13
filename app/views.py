@@ -39,6 +39,7 @@ def allowed_file(filename):
 
 def file_exists(file_path):
     full_path = os.path.normpath(os.path.join(app.root_path, file_path.lstrip('/')))
+    e = isfile(full_path)
     return isfile(full_path)
 
 
@@ -123,7 +124,7 @@ def contacts():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('info'))
+        return redirect(url_for('account'))
 
     form = SignUpForm()
     if form.validate_on_submit():
@@ -134,9 +135,9 @@ def signup():
 
         if image_file and allowed_file(image_file.filename):
             image_path = resize_and_save_image(image_file, UPLOAD_FOLDER, MAX_IMAGE_SIZE)
-            image_path = os.path.join('profile_images', os.path.basename(image_path))
+            image_path = os.path.basename(image_path)
         else:
-            image_path = None  #
+            image_path = None
 
         new_user = Users(username=username, email=email, password=password, image_file=image_path)
         db.session.add(new_user)
@@ -150,17 +151,14 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('info'))
+        return redirect(url_for('account'))
     form = LoginForm()
 
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
-        form_email = form.email.data
-        form_password = form.password.data
-        form_remember = form.remember.data
-        if user and user.validate_password(form_password) and user.email == form_email:
-            if form_remember == True:
-                login_user(user, form_remember)
+        if user and user.validate_password(form.password.data):
+            if form.remember.data == True:
+                login_user(user, form.remember.data)
                 flash("You have logged in.", category="flash-success")
                 return redirect(url_for("account"))
             flash("You didn't remember yourself in the site. Please, check your input again.", category="flash-error")
@@ -185,13 +183,11 @@ def account():
         old_file_name = os.path.basename(old_image_path)
         full_old_image_path = os.path.join(app.static_folder, 'profile_images', old_file_name)
         new_image_file = update_account_form.image.data
-        allow = allowed_file(new_image_file.filename)
-        check = new_image_file and allow
-        if check:
+        if new_image_file :
             image_path = resize_and_save_image(new_image_file, UPLOAD_FOLDER, MAX_IMAGE_SIZE)
             if image_path:
-                current_user.image_file = os.path.join('profile_images', os.path.basename(image_path))
-                if full_old_image_path and os.path.isfile(full_old_image_path):
+                current_user.image_file = os.path.basename(image_path)
+                if full_old_image_path and os.path.isfile(full_old_image_path) and user_image_file != 'default.jpg':
                     os.remove(full_old_image_path)
 
         current_user.username = update_account_form.username.data
@@ -201,19 +197,10 @@ def account():
         flash("Account information updated successfully!", category='flash-success')
         return redirect(url_for('account', form=update_account_form))
 
-    if user_image_file:
-        file_name = basename(user_image_file)
-        profile_image_path = f'profile_images/{file_name}'
-        update_account_form.username.data = current_user.username
-        update_account_form.email.data = current_user.email
-        update_account_form.bio.data = current_user.bio
-        return render_template('account.html', user_id=user_id, profile_image_path=profile_image_path, update_account_form=update_account_form)
-    else:
-        profile_image_path = f'profile_images/default.jpg'
-        update_account_form.username.data = current_user.username
-        update_account_form.email.data = current_user.email
-        update_account_form.bio.data = current_user.bio
-        return render_template('account.html', user_id=user_id, profile_image_path=profile_image_path, update_account_form=update_account_form)
+    update_account_form.username.data = current_user.username
+    update_account_form.email.data = current_user.email
+    update_account_form.bio.data = current_user.bio
+    return render_template('account.html', user_id=user_id, update_account_form=update_account_form)
 
 @app.after_request
 def after_request(response):
@@ -235,19 +222,11 @@ def users():
     user_data = []
 
     for user in all_users:
-        user_image_file = user.image_file
-
-        if user_image_file:
-            file_name = os.path.basename(user_image_file)
-            profile_image_path = f'profile_images/{file_name}'
-        else:
-            profile_image_path = 'profile_images/default.jpg'
-
         user_data.append({
             'id': user.id,
             'username': user.username,
             'email': user.email,
-            'profile_image_path': profile_image_path
+            'profile_image_path': user.image_file
         })
 
     return render_template('users.html', user_data=user_data)
