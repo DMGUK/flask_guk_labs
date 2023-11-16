@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-load_dotenv('migrations/database_link.env')
+load_dotenv('database_link.env')
 
 
 UPLOAD_FOLDER = 'app/static/profile_images'
