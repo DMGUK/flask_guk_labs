@@ -22,9 +22,8 @@
                             <td class="databaseOutputTable">{{ user.email }}</td>
                             <td class="databaseOutputTable">
                                 {% set profile_image_path = user.profile_image_path %}
-                                {% set exists = url_for('static', filename='profile_images/' + profile_image_path) | file_exists %}
 
-                                {% if profile_image_path and exists %}
+                                {% if profile_image_path %}
                                     <img src="{{ url_for('static', filename='profile_images/' + profile_image_path) }}" alt="User Profile Image" width="200" height="200"><br><br>
                                 {% else %}
                                     <img src="{{ url_for('static', filename='profile_images/default.jpg') }}" alt="Default Profile Image" width="200" height="200"><br><br>

@@ -30,16 +30,15 @@
         <p><b>You were seen last on {{ current_user.last_seen }}</b></p>
         <p><b>Your profile image : </b></p>
         {% set profile_image_path = current_user.image_file %}
-        {% set exists = url_for('static', filename='profile_images/' + profile_image_path) | file_exists %}
 
-        {% if profile_image_path and exists %}
+        {% if profile_image_path %}
             <img src="{{ url_for('static', filename='profile_images/' + profile_image_path) }}" alt="User Profile Image" width="200" height="200"><br><br>
         {% else %}
             <img src="{{ url_for('static', filename='profile_images/default.jpg') }}" alt="Default Profile Image" width="200" height="200"><br><br>
         {% endif %}
 
         <div>
-            <strong><a href="/info" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Go to the main user page</a></strong>
+            <strong><a href="{{ url_for('cookies.info') }}" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Go to the main user page</a></strong>
         </div>
         <br>
         <h2>Edit your user data</h2>
@@ -52,5 +51,9 @@
             {{ render_field(update_account_form.image) }}
             {{ render_field(update_account_form.submit) }}
         </form>
+        <h2>Change your password</h2>
+        <div>
+            <strong><a href="/change_password" style="color:#000;" class="btn btn-secondary ms-1 toggleButton">Set your new password</a></strong>
+        </div>
     </div>
 {% endblock %}

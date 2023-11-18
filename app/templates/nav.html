@@ -1,18 +1,32 @@
-{% set menu_logged_in = {'Homepage': url_for('homepage'),
- 'About Me': url_for('about_me'), 'My Experience': url_for('my_experience'),
- 'My Projects': url_for('my_projects'), 'Find Me': url_for('contacts'),
- 'Todo': url_for('todo'), 'Feedbacks': url_for('feedback') }%}
-{% set menu_logged_out = {'Homepage': url_for('homepage'),
- 'About Me': url_for('about_me'), 'My Experience': url_for('my_experience'), 'My Projects': url_for('my_projects'),
- 'Find Me': url_for('contacts'), 'Login': url_for('login'), 'Sign Up': url_for('signup'),
- 'Todo': url_for('todo'), 'Feedbacks': url_for('feedback') }%}
+{%
+    set menu_logged_in = {
+        'Homepage': url_for('portfolio.homepage'),
+        'About Me': url_for('portfolio.about_me'),
+        'My Experience': url_for('portfolio.my_experience'),
+        'My Projects': url_for('portfolio.my_projects'),
+        'Find Me': url_for('portfolio.contacts'),
+        'Todo': url_for('todo.todo_list'),
+        'Feedbacks': url_for('feedback.feedback_list')
+    }
+%}
+{%
+    set menu_logged_out = {
+        'Homepage': url_for('portfolio.homepage'),
+        'About Me': url_for('portfolio.about_me'),
+        'My Experience': url_for('portfolio.my_experience'),
+        'My Projects': url_for('portfolio.my_projects'),
+        'Find Me': url_for('portfolio.contacts'),
+        'Login': url_for('accounts.login'),
+        'Sign Up': url_for('accounts.signup'),
+        'Todo': url_for('todo.todo_list'),
+        'Feedbacks': url_for('feedback.feedback_list') }%}
 
 <nav>
     <ul>
         {% if current_user.is_authenticated %}
-            <li><a class="toggleButton" href="{{ url_for('account') }}" data-title="My Profile">My Profile</a></li>
+            <li><a class="toggleButton" href="{{ url_for('accounts.account') }}" data-title="My Profile">My Profile</a></li>
             <br>
-            <li><a class="toggleButton" href="{{ url_for('logout') }}" data-title="Logout">Logout</a></li>
+            <li><a class="toggleButton" href="{{ url_for('accounts.logout') }}" data-title="Logout">Logout</a></li>
             <br>
             {% for name, url in menu_logged_in.items() %}
                 <li>

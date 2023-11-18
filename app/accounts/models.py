@@ -2,24 +2,12 @@ from datetime import datetime
 
 from flask_login import UserMixin
 
-from app import db, bcrypt, login_manager
+from app import db, login_manager, bcrypt
+
 
 @login_manager.user_loader
 def user_loader(user_id):
     return Users.query.get(int(user_id))
-
-
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100))
-    description = db.Column(db.String(200))
-    complete = db.Column(db.Boolean)
-
-class Feedback(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    feedback = db.Column(db.String(200))
-    date = db.Column(db.DateTime, default=datetime.now().replace(microsecond=0))
 
 
 class Users(db.Model, UserMixin):

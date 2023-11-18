@@ -2,9 +2,10 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField
-from wtforms.validators import DataRequired, Length, Email, ValidationError, EqualTo, Regexp
-from config import ALLOWED_EXTENSIONS
-from app.models import Users
+from wtforms.validators import DataRequired, Regexp, Email, EqualTo, ValidationError, Length
+
+from app.accounts.image_config import ALLOWED_EXTENSIONS
+from app.accounts.models import Users
 
 
 class LoginForm(FlaskForm):
@@ -18,16 +19,6 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField("Password", validators=[DataRequired("The length of password must be from 4 to 25 symbols"), Length(min=4, max=25)], render_kw={'placeholder': 'Enter your new password: '})
     confirm_new_password = PasswordField("Password", validators=[DataRequired("This field is required")], render_kw={'placeholder': 'Confirm your new password: '})
     submit = SubmitField("Save the new password")
-
-class ToDoForm(FlaskForm):
-    title = StringField('Todo Title', validators=[DataRequired("This field is required"), Length(min=1, max=100)])
-    description = StringField('', validators=[DataRequired("This field is required"), Length(min=1 , max=200)])
-    submit = SubmitField("Add new task")
-
-class FeedbackForm(FlaskForm):
-    username = StringField('Feedback Username', validators=[DataRequired("This field is required"), Length(min=1, max=100)])
-    feedback = StringField('', validators=[DataRequired("This field is required"), Length(min=1 , max=200)])
-    submit = SubmitField("Add new task")
 
 class SignUpForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(message="This field is required and must have length between 4 and 25 symbols"), Length(min=4, max=25),
@@ -79,4 +70,3 @@ class UpdateAccountForm(FlaskForm):
             user = Users.query.filter_by(username=username.data).first()
             if user:
                 raise ValidationError('This username is already in use.')
-
