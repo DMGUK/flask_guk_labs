@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
@@ -18,6 +19,7 @@ def create_app(config_name='development'):
         app.config.from_object(DevelopmentConfig)
 
     db.init_app(app)
+    Migrate(app, db)
     bcrypt.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'accounts.login'
@@ -29,11 +31,13 @@ def create_app(config_name='development'):
         from .accounts.views import accounts
         from .todo.views import todo
         from .feedback.views import feedback
+        from .posts.views import posts
 
         app.register_blueprint(accounts)
         app.register_blueprint(portfolio)
         app.register_blueprint(cookies)
         app.register_blueprint(todo)
         app.register_blueprint(feedback)
+        app.register_blueprint(posts)
 
     return app

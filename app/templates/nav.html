@@ -6,7 +6,8 @@
         'My Projects': url_for('portfolio.my_projects'),
         'Find Me': url_for('portfolio.contacts'),
         'Todo': url_for('todo.todo_list'),
-        'Feedbacks': url_for('feedback.feedback_list')
+        'Feedbacks': url_for('feedback.feedback_list'),
+        'Posts': url_for('posts.view_posts')
     }
 %}
 {%
@@ -17,9 +18,8 @@
         'My Projects': url_for('portfolio.my_projects'),
         'Find Me': url_for('portfolio.contacts'),
         'Login': url_for('accounts.login'),
-        'Sign Up': url_for('accounts.signup'),
-        'Todo': url_for('todo.todo_list'),
-        'Feedbacks': url_for('feedback.feedback_list') }%}
+        'Sign Up': url_for('accounts.signup')}
+%}
 
 <nav>
     <ul>

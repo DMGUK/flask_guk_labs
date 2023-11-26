@@ -147,3 +147,49 @@ main {
     width: 1000px;
     height: 300px;
 }
+
+.postAnchor{
+    text-decoration: none;
+}
+
+.navPagination{
+    border: none;
+    background: inherit;
+    margin-top: 20px;
+    background-position: center;
+    width: 300px;
+}
+
+.pagination > li{
+    border: 1px solid #8e8e8e;
+    border-radius: 6px;
+}
+
+.navContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.createPostFormInput > input, .typeSelection{
+    width : 250px;
+}
+
+#postForm > #text{
+    width: 1000px;
+    height: 300px;
+}
+
+.mainText{
+    background-color: #e5c7ca;
+    border-radius: 10px;
+    border: 1px solid brown;
+}
+
+.mainText > p{
+    padding: 10px;
+}
+
+#categoryForm > #name{
+    width: 400px;
+}
