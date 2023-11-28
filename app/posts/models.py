@@ -9,12 +9,6 @@ class EnumTopic(enum.Enum):
     Publication = 2
     Other = 3
 
-post_tags = db.Table('post_tags',
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
-)
-
-
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
@@ -36,6 +30,12 @@ class Categories(db.Model):
     name = db.Column(db.String(50), nullable=False)
     posts = db.relationship('Posts', backref='category', lazy=True)
 
+post_tags = db.Table('post_tags',
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True)
+)
+
 class Tags(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    posts = db.relationship('Posts', secondary=post_tags, backref='tags')

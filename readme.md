@@ -99,3 +99,33 @@ Here are screenshots with demonstrated work
 ### Screenshot 23: View Post (Step 2)
 
 ![Screenshot 23](screenshots/view_post_2.PNG)
+
+#### Screenshot 24: Change in the Post After Deleting Tag
+![Screenshot 24](screenshots/change_in_the_post_after_deleting_tag.PNG)
+
+#### Screenshot 25: Change in the Post After Updating Tag
+![Screenshot 25](screenshots/change_in_the_post_after_updating_tag.PNG)
+
+#### Screenshot 26: Creating a Tag
+![Screenshot 26](screenshots/creating_a_tag.PNG)
+
+#### Screenshot 27: Creating Tag Success
+![Screenshot 27](screenshots/creating_tag_success.PNG)
+
+#### Screenshot 28: Delete Tag Alert Message
+![Screenshot 28](screenshots/delete_tag_alert_message.PNG)
+
+#### Screenshot 29: Delete Tag Success
+![Screenshot 29](screenshots/delete_tag_success.PNG)
+
+#### Screenshot 30: Tags Main Page
+![Screenshot 30](screenshots/tags_main_page.PNG)
+
+#### Screenshot 31: Updating a Tag
+![Screenshot 31](screenshots/updating_a_tag.PNG)
+
+#### Screenshot 32: Updating a Tag Success
+![Screenshot 32](screenshots/updating_a_tag_success.PNG)
+
+#### Screenshot 33: View Tag
+![Screenshot 33](screenshots/view_tag.PNG)

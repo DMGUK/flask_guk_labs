@@ -5,8 +5,9 @@ from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
-from app.posts.forms import CreatePostForm, UpdatePostForm, CreateCategoryForm, UpdateCategoryForm
-from app.posts.models import Posts, Categories
+from app.posts.forms import CreatePostForm, UpdatePostForm, CreateCategoryForm, UpdateCategoryForm, CreateTagForm, \
+    UpdateTagForm
+from app.posts.models import Posts, Categories, Tags, post_tags
 from app import db
 from config import app_root_path
 from . import posts
@@ -49,10 +50,21 @@ def create_post():
             image_path = os.path.basename(image_path)
         else:
             image_path = None
+
         new_post = Posts(title=title, text=text, type=type, image_file=image_path,
                          user_id=current_user.id, category_id=category_id, enabled=enabled)
+
         db.session.add(new_post)
         db.session.commit()
+
+        selected_tags = form.tag.data
+        for tag_id in selected_tags:
+            tag = Tags.query.get(tag_id)
+            if tag:
+                new_post.tags.append(tag)
+
+        db.session.commit()
+
         flash('Post added successfully!', 'flash-success')
         return redirect(url_for('posts.view_posts'))
     return render_template('create_post.html', form=form)
@@ -104,6 +116,11 @@ def update_post(id):
         post.text = form.text.data
         post.type = form.type.data
         post.category_id = form.category.data
+        selected_tags = form.tag.data
+        for tag_id in selected_tags:
+            tag = Tags.query.get(tag_id)
+            if tag:
+                post.tags.append(tag)
 
         db.session.commit()
         flash('Post updated successfully!', 'flash-success')
@@ -174,3 +191,53 @@ def delete_category(id):
     flash('Category deleted successfully!', 'flash-success')
     return redirect(url_for('posts.view_categories'))
 
+@posts.route('/create_tag', methods=['GET', 'POST'])
+@login_required
+def create_tag():
+    form = CreateTagForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        new_tag = Tags(name=name)
+        db.session.add(new_tag)
+        db.session.commit()
+        flash('Tag was added successfully!', 'flash-success')
+        return redirect(url_for('posts.view_tags'))
+    return render_template('create_tag.html', form=form)
+
+@posts.route('/view_tags', methods=['GET'])
+def view_tags():
+    page = request.args.get('page', 1, type=int)
+    tags = Tags.query.paginate(page=page, per_page=5)
+    return render_template('tags_list.html', tags=tags)
+
+@posts.route("/view_tag/<int:id>", methods=['GET', 'POST'])
+def view_tag(id):
+    tag = Tags.query.get_or_404(id)
+    posts = Posts.query.join(post_tags).filter(post_tags.c.tag_id == id).all()
+    return render_template('view_tag.html', tag=tag, posts=posts)
+
+@posts.route('/update_tag/<int:id>', methods=['GET', 'POST'])
+@login_required
+def update_tag(id):
+    tag = Tags.query.get_or_404(id)
+
+    form = UpdateTagForm(
+        name=tag.name
+    )
+    if form.validate_on_submit():
+        tag.name = form.name.data
+        db.session.commit()
+        flash('Tag was updated successfully!', 'flash-success')
+        return redirect(url_for('posts.view_tag', id=tag.id))
+
+    return render_template('update_tag.html', form=form, tag=tag)
+
+
+@posts.route("/delete_tag/<int:id>")
+@login_required
+def delete_tag(id):
+    tag = Tags.query.get_or_404(id)
+    db.session.delete(tag)
+    db.session.commit()
+    flash(f"Tag was successfully deleted", "flash-success")
+    return redirect(url_for("posts.view_tags"))
