@@ -53,7 +53,7 @@ class UpdateAccountForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(message="This field is required"), Email()],
     render_kw={'placeholder': 'Enter your email: '})
 
-    bio = StringField('Your Bio',validators=[DataRequired(message="This field is required")])
+    bio = StringField('Your Bio')
 
     image = FileField("Choose New Image", validators=[FileAllowed(ALLOWED_EXTENSIONS)])
 

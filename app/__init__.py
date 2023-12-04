@@ -11,10 +11,12 @@ login_manager = LoginManager()
 def create_app(config_name='development'):
     app = Flask(__name__)
 
-    from config import DevelopmentConfig, ProductionConfig
+    from config import DevelopmentConfig, ProductionConfig, TestingConfig
 
     if config_name == 'production':
         app.config.from_object(ProductionConfig)
+    elif config_name == 'testing':
+        app.config.from_object(TestingConfig)
     else:
         app.config.from_object(DevelopmentConfig)
 
