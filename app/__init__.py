@@ -34,6 +34,7 @@ def create_app(config_name='development'):
         from .todo.views import todo
         from .feedback.views import feedback
         from .posts.views import posts
+        from .api.views import api
 
         app.register_blueprint(accounts)
         app.register_blueprint(portfolio)
@@ -41,5 +42,7 @@ def create_app(config_name='development'):
         app.register_blueprint(todo)
         app.register_blueprint(feedback)
         app.register_blueprint(posts)
+        app.register_blueprint(api)
+
 
     return app
