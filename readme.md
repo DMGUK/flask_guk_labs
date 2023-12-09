@@ -8,10 +8,14 @@ Lab 12. Part 2 (Using pytest for testing in Flask applications)
 
 Here are screenshots demonstrating various functionalities:
 
-### Screenshot 1: Running all the created tests for this application
+### Screenshot 1: Running all the created tests for this application (in PyCharm)
 
-![Create a New Todo](screenshots/tests_run.PNG)
+![Running using PyCharm](screenshots/tests_run.PNG)
 
-### Screenshot 2: Coverage report for these tests
+### Screenshot 2: Running all the created tests for this application (in command prompt)
 
-![Delete a Todo](screenshots/coverage_report.PNG)
+![Running using cmd](screenshots/tests_run_terminal.PNG)
+
+### Screenshot 3: Coverage report for these tests
+
+![Coverage report](screenshots/coverage_report.PNG)
