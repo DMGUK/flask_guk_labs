@@ -19,7 +19,7 @@ class Users(db.Model, UserMixin):
     bio = db.Column(db.Text, nullable=True)
     last_seen = db.Column(db.DateTime, default=datetime.now().replace(microsecond=0))
 
-    def __init__(self, username, email, image_file, password):
+    def __init__(self, username, email, password, image_file='default.jpg'):
         self.username = username
         self.email = email
         self.image_file = image_file

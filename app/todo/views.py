@@ -36,10 +36,11 @@ def update_todo(todo_id):
     db.session.commit()
     return redirect(url_for("todo.todo_list"))
 
-@todo.route("/delete_todo/<int:todo_id>", methods=["POST"])
+@todo.route("/delete_todo/<int:todo_id>")
 @login_required
 def delete_todo(todo_id):
     todo = Todo.query.get(todo_id)
     db.session.delete(todo)
     db.session.commit()
+    flash("Todo task has been successfully deleted", category='flash-success')
     return redirect(url_for("todo.todo_list"))

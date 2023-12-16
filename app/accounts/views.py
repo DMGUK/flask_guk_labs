@@ -169,9 +169,9 @@ def change_password():
                 current_user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
                 db.session.commit()
                 flash("Password has been changed successfully", category='flash-success')
-                return redirect(url_for('change_password'))
+                return redirect(url_for('accounts.change_password'))
 
             flash("Error changing your password", category='flash-error')
-            return redirect(url_for('change_password'))
+            return redirect(url_for('accounts.change_password'))
 
     return render_template('change_password.html', form=form)

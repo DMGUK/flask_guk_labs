@@ -7,7 +7,7 @@ from flask import url_for
 
 
 def test_user_model():
-    user = Users("user", "user@gmail.com", "image.png", "password")
+    user = Users("user", "user@gmail.com", "password", "image.png")
     assert user.username == 'user'
     assert user.email == 'user@gmail.com'
     assert user.image_file == 'image.png'
