@@ -18,6 +18,10 @@ class Config:
     JWT_SECRET_KEY = "super-secret"
     JWT_ACCESS_TOKEN_EXPIRES = ACCESS_EXPIRES['access']
     JWT_REFRESH_TOKEN_EXPIRES = ACCESS_EXPIRES['refresh']
+    OPENAPI_VERSION = "3.0.3"
+    OPENAPI_URL_PREFIX = "/api_accounts"
+    OPENAPI_SWAGGER_UI_PATH = "/swagger-ui"
+    OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
 class DevelopmentConfig(Config):
     DEBUG = True

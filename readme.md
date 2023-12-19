@@ -2,56 +2,46 @@
 
 ## Description
 
-Lab 14 (Using JWT (JSON Web Tokens) in Flask applications)
+Lab 15 (Flask RESTful API. Marshmallow. Swagger)
 
 ## Screenshots
 
 Here are screenshots demonstrating various functionalities:
 
-### Screenshot 1: Creating a Todo with JWT Authentication
+### Screenshot 1: Creating a User with Flask RESTful API
 
-![Creating a Todo with JWT](screenshots/jwt_creating_todo.PNG)
+![Creating a User with Flask RESTful](screenshots/flask_restful_create_user.PNG)
 
-### Screenshot 2: Database Changes after Creating a Todo with JWT Authentication
 
-![Database Changes after Creating Todo](screenshots/jwt_creating_todo_database_changes.PNG)
+### Screenshot 2: Getting a User with Flask RESTful API
 
-### Screenshot 3: Deleting a Todo with JWT Authentication
+![Getting a User with Flask RESTful](screenshots/flask_restful_get_a_user.PNG)
 
-![Deleting a Todo with JWT](screenshots/jwt_delete_todo.PNG)
+### Screenshot 3: Getting All Users with Flask RESTful API
 
-### Screenshot 4: Error for Expired Token with JWT Authentication
+![Getting All Users with Flask RESTful](screenshots/flask_restful_get_all_users.PNG)
 
-![Expired Token Error with JWT](screenshots/jwt_expired_token_error.PNG)
+### Screenshot 4: Updating a User with Flask RESTful API
 
-### Screenshot 5: Getting a Single Todo with JWT Authentication
+![Updating a User with Flask RESTful](screenshots/flask_restful_update_a_user.PNG)
 
-![Getting a Todo with JWT](screenshots/jwt_get_todo.PNG)
+### Screenshot 5: Updated User Details with Flask RESTful API
 
-### Screenshot 6: Getting All Todos with JWT Authentication
+![Updated User Details with Flask RESTful](screenshots/flask_restful_updated_user.PNG)
 
-![Getting All Todos with JWT](screenshots/jwt_get_todos.PNG)
+### Screenshot 6: Deleting a User with Flask RESTful API
 
-### Screenshot 7: Logging In with JWT Authentication
+![Deleting a User with Flask RESTful](screenshots/flask_restful_delete_a_user.PNG)
 
-![Logging In with JWT](screenshots/jwt_logging_in.PNG)
+### Screenshot 7: Swagger Documentation for Flask RESTful API
 
-### Screenshot 8: Refreshing a Token with JWT Authentication
+![Swagger Documentation 1 for Flask RESTful](screenshots/flask_restful_swagger_documentation.PNG)
 
-![Refreshing a Token with JWT](screenshots/jwt_refresh_token.PNG)
+### Screenshot 8: Additional Swagger Documentation for Flask RESTful API
 
-### Screenshot 9: Revoking a Token with JWT Authentication
+![Swagger Documentation 2 for Flask RESTful](screenshots/flask_restful_swagger_documentation_2.PNG)
 
-![Revoking a Token with JWT](screenshots/jwt_revoke_token.PNG)
+### Screenshot 9: Sample Showcase of Method in Swagger Documentation for Flask RESTful API
 
-### Screenshot 10: Updating a Todo with JWT Authentication
+![Sample Showcase of Method in Swagger Documentation for Flask RESTful](screenshots/flask_restful_swagger_documentation_sample_showcase_of_method.PNG)
 
-![Updating a Todo with JWT](screenshots/jwt_todo_update.PNG)
-
-### Screenshot 11: Error for Wrong Login Data with JWT Authentication
-
-![Wrong Login Data Error with JWT](screenshots/jwt_wrong_login_data.PNG)
-
-### Screenshot 12: Error for Wrong Token with JWT Authentication
-
-![Wrong Token Error with JWT](screenshots/jwt_wrong_token.PNG)

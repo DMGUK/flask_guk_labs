@@ -14,7 +14,6 @@ jwt_manager = JWTManager()
 jwt_redis_blocklist = redis.StrictRedis(
     host="localhost", port=6379, db=0, decode_responses=True
 )
-
 def create_app(config_name='development'):
     app = Flask(__name__)
 
@@ -44,7 +43,8 @@ def create_app(config_name='development'):
         from .feedback.views import feedback
         from .posts.views import posts
         from .api.views import api
-        from .accounts_api.views import accounts_api
+        from .api_accounts.views import api_accounts
+        from .swagger import swaggerui_blueprint
 
         app.register_blueprint(accounts)
         app.register_blueprint(portfolio)
@@ -53,7 +53,7 @@ def create_app(config_name='development'):
         app.register_blueprint(feedback)
         app.register_blueprint(posts)
         app.register_blueprint(api)
-        app.register_blueprint(accounts_api)
-
+        app.register_blueprint(api_accounts)
+        app.register_blueprint(swaggerui_blueprint, url_prefix='/swagger')
 
     return app
