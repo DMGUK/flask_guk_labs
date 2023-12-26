@@ -25,7 +25,7 @@ def test_update_todo(client, init_database, log_in_default_user, todo):
 
 def test_delete_todo(client, init_database, log_in_default_user, todo):
     todo_id_to_delete = todo[0].id
-    response = client.post(url_for('todo.delete_todo', todo_id=todo_id_to_delete), follow_redirects=True)
+    response = client.get(url_for('todo.delete_todo', todo_id=todo_id_to_delete), follow_redirects=True)
     deleted_todo = Todo.query.get(todo_id_to_delete)
     assert response.status_code == 200
     assert deleted_todo is None
